@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "q3mMCKc36YYeEfI7ROgD77g+lPZ3bvg9sb6mpy9Gr0c=",
+  "Source": "BudgetPlannerBackend",
+  "BasePath": "_content/BudgetPlannerBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

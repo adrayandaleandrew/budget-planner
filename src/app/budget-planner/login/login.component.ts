@@ -1,59 +1,69 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatSnackBar} from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  loginForm:any;
-  registerForm:any;
+
+  loginForm: any;
+  registerForm: any;
   activeForm: 'login' | 'register' = 'login';
 
-  constructor(private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar ){}
-    ngOnInit() {
-      this.loginForm = this.fb.group({
-        email:['', [Validators.required, Validators.email]],
-        password: ['', Validators.required]
-      });
+  private baseUrl = 'http://localhost:5000/api/user/register'; // Replace with your ASP.NET Core backend URL
 
-      this.registerForm = this.fb.group({
-        username: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', Validators.required]
-      });
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private http: HttpClient
+  ) {}
+
+  ngOnInit() {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
+    });
+
+    this.registerForm = this.fb.group({
+      username: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
+    });
+  }
+
+  toggleForm(form: 'login' | 'register') {
+    this.activeForm = form;
+  }
+
+  login() {
+    // Implement login logic here
+  }
+
+  register() {
+    if (this.registerForm.valid) {
+      this.http.post(this.baseUrl, this.registerForm.value)
+        .subscribe(
+          () => {
+            console.log('Registration successful');
+            this.snackBar.open('Registration successful!', 'Close', { duration: 3000 });
+            setTimeout(() => {
+              this.router.navigate(['/budget-planner/login']);
+              this.registerForm.reset();
+            }, 2000);
+          },
+          error => {
+            console.error('Registration failed:', error);
+            this.snackBar.open('Registration failed. Please try again.', 'Close', { duration: 3000 });
+          }
+        );
+    } else {
+      this.snackBar.open('Please fill in all fields correctly', 'Close', { duration: 3000 });
     }
-
-    toggleForm(form: 'login' | 'register'){
-      this.activeForm = form;
-    }
-
-    login() {
-      if (this.loginForm.valid) {
-        console.log("Login info==>>", this.loginForm.value);
-        this.router.navigate(['/budget-planner/dashboard']);
-      } else {
-        this.snackBar.open('Invalid email or password!', 'Close', { duration: 3000 });
-      }
-    }
-     
-
-    register(){
-      if(this.registerForm.valid){
-        console.log("Register info==>>", this.registerForm.value);
-        setTimeout(()=> {
-          window.location.reload();
-        }, 2000);
-        this.router.navigate(['/budget-planner/login']);
-      }else{
-        this.snackBar.open('Please fill in all fields correctly', 'Close', {duration:3000});
-      }
-    }
-
+  }
 }
