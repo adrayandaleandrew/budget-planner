@@ -43,7 +43,7 @@ export class DashboardComponent {
   }
 
   onTodo(){
-    this.router.navigate(['./budget-planner/tood']);
+    this.router.navigate(['./budget-planner/todo']);
   }
 
   get currentMonthSavings(): number {
